@@ -24,7 +24,7 @@
 
 signed int a;
 void i2c_Send_Byte(unsigned char ch);
-unsigned char i2c_Recieve_Byte();
+void i2c_Recieve_Byte(unsigned char *data);
 
 void i2c_Send_Byte(unsigned char ch)
 {
@@ -35,14 +35,13 @@ void i2c_Send_Byte(unsigned char ch)
 }
 
 
-unsigned char i2c_Recieve_Byte()
+void i2c_Recieve_Byte(unsigned char *data)
 {
-    unsigned char temp = 0x00;
+    *data = 0x00;
     for(a=7;a>=0;a--){
-        bit_in(&temp);
-        temp<<a;
+        bit_in(&*data);
+        *data<<a;
     }
-    return temp;
 }
 
 void main(void) {  
@@ -73,14 +72,7 @@ void main(void) {
     i2c_Send_Byte(0xD1); //Data Read
     bit_in(&temp);
     
-     bit_in(&temp);
-     bit_in(&temp);
-     bit_in(&temp);
-     bit_in(&temp);
-     bit_in(&temp);
-    bit_in(&temp);
-    bit_in(&temp);
-    bit_in(&temp);
+    i2c_Recieve_Byte(&temp);
     
     i2c_sendnoack();
     i2c_stop();
