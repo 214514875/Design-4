@@ -13,6 +13,7 @@
 #define D6 RC2
 #define D7 RC6
 
+
 //Configuration
 #pragma config FOSC = HS,WDTE=OFF ,PWRTE = OFF,BOREN = OFF
 #include <xc.h>
@@ -27,14 +28,14 @@ void main(void) {
     unsigned char temp1 = 0x00;
 
     TRISC = 0x00;
-    TRISB = 0x00;
-
+    TRISB = 0x10; /*All But RB4 set as output for Port B*/
+  
     ANSEL = 0x00;
     ANSELH = 0x00;
     CM1CON0 = 0;
     CM2CON0 = 0;
     __delay_ms(100);
-
+    
     Lcd_Init();
     
     //Write and the Read
@@ -55,9 +56,11 @@ void main(void) {
     i2c_stop();
 
     Lcd_Write_Char(temp + 0x30);
-
+    
+    /*Trying to get a ESP8266 interface*/
+    
     while (1) {
-
+       
     }
 
     return;
