@@ -119,27 +119,23 @@ void main(void) {
     clearVAL();
     UART_Write_Text("AT\r\n");
     UART_Read_Text(&value, 15);
-
-    
-    if (strstr(value, "OK") != NULL) {
-        Lcd_Write_String("OK");
-    } else {
-        Lcd_Write_String("ERROR");
-    }
-    
+  
+    Check(&value);
     
     __delay_ms(300);
     clearVAL();
     UART_Write_Text("ATE0\r\n");
     UART_Read_Text(&value, 15);
  
+    Check(&value);
     
-    if (strstr(value, "OK") != NULL) {
-        Lcd_Write_String("OK");
-    } else {
-        Lcd_Write_String("ERROR");
-    }
-
+    __delay_ms(300);
+    clearVAL();
+    UART_Write_Text("AT+CWMODE=1\r\n");
+    UART_Read_Text(&value, 10);
+    
+    Check(&value);
+    
     while (1) {
         // UART_Write_Text("AT");
         /*
