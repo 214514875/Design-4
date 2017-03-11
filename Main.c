@@ -32,8 +32,20 @@
 //#include "PIC16_I2C_BITBANG.h"
 //#include "LOL.h"
 
-signed int a, pos;
+signed int a, pos=0;
 unsigned char x = 0, value[15];
+
+void interrupt Serial()
+{
+    if(RCIF==1&&pos<28)
+    {
+        value[pos]=RCREG;
+        pos++;
+        RCIF=0;
+
+
+    }
+}
 
 void clearVAL() {
     unsigned char i;
@@ -80,7 +92,6 @@ void main(void) {
 
     Lcd_Init();
 
-
     //UART_Init(9600);
     //EUSART_Init(9600);
 
@@ -104,9 +115,9 @@ void main(void) {
      */
 
     __delay_ms(1000);
-
+    
     clearVAL();
-    UART_Write_Text("ATE0\r\n");
+    UART_Write_Text("AT\r\n");
     UART_Read_Text(&value, 15);
 
     
@@ -116,15 +127,14 @@ void main(void) {
         Lcd_Write_String("ERROR");
     }
     
-    unsigned char tempp[15];
+    
     __delay_ms(300);
     clearVAL();
-    UART_Write_Text("AT\r\n");
-    UART_Read_Text(&tempp, 10);
+    UART_Write_Text("ATE0\r\n");
+    UART_Read_Text(&value, 15);
+ 
     
-    Lcd_Write_String("LOLz");
-    
-    if (strstr(tempp, "OK") != NULL) {
+    if (strstr(value, "OK") != NULL) {
         Lcd_Write_String("OK");
     } else {
         Lcd_Write_String("ERROR");
