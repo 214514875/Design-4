@@ -99,8 +99,29 @@ void main(void) {
     UART_Write_Text("AT+CIPMUX=1\r\n");
     newCheck();
     
+    Lcd_Clear();
+    /*Creating a server to sent locally*/
     __delay_ms(50);
-   
+    UART_Write_Text("AT+CIPSERVER=1,70\r\n");
+    newCheck();
+    
+    unsigned char arr [35];
+    __delay_ms(50);
+    UART_Write_Text("AT+CIPSTATUS\r\n");
+    //newCheck();
+    UART_Read_Text(&arr,35);
+    
+    Lcd_Write_String(arr);
+    __delay_ms(1000);
+    
+    Lcd_Clear();
+    
+    char subbuff[17];
+    memcpy( subbuff, &arr[16], 16 );
+    subbuff[16] = '\0';
+    
+    Lcd_Write_String(subbuff);
+    
     /*Connect to the Required Router using routerName and Password*/
     //__delay_ms(50);
     //UART_Write_Text("AT+CWJAP=\"Timmy\",\"96027313\"\r\n");
