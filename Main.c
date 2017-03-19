@@ -13,7 +13,6 @@
 #define D6 RC2
 #define D7 RC6
 
-
 //Configuration
 #pragma config FOSC = INTRCIO
 #pragma config WDTE = OFF 
@@ -27,41 +26,12 @@
 #include <string.h>
 #include "lcd.h" 
 #include "UART Library.h"
-//#include "LOL.h"
-//#include "esp8266.h"
-//#include "PIC16_I2C_BITBANG.h"
-//#include "LOL.h"
 
 signed int a, pos=0;
-unsigned char x = 0, value[15];
-
-void interrupt Serial()
-{
-    if(RCIF==1&&pos<28)
-    {
-        value[pos]=RCREG;
-        pos++;
-        RCIF=0;
-
-
-    }
-}
-
-void clearVAL() {
-    unsigned char i;
-    for (i = 0; i < 15; i++)
-        value[i] = NULL;
-}
+unsigned char x = 0;
 
 void main(void) {
     GIE = 0;
-    /*Setting Fosc to 8MHz*/
-    /*
-    OSCCONbits.IRCF0 = 1;
-    OSCCONbits.IRCF1 = 1;
-    OSCCONbits.IRCF2 = 1;
-
-     */
 
     /*Disabling analogue inputs and comparators*/
     ANSEL = 0x00;
@@ -86,14 +56,9 @@ void main(void) {
     BRG16 = 1;
 
     unsigned char temp = 0x00;
-    unsigned char temp1 = 0x00;
-
+    
     TRISC = 0x00;
-
     Lcd_Init();
-
-    //UART_Init(9600);
-    //EUSART_Init(9600);
 
     /*
     //Write and the Read
@@ -114,27 +79,57 @@ void main(void) {
     i2c_stop();
      */
 
+    /*Check Startup*/
     __delay_ms(1000);
-    
-    clearVAL();
     UART_Write_Text("AT\r\n");
-    UART_Read_Text(&value, 15);
-  
-    Check(&value);
+    newCheck();
     
-    __delay_ms(300);
-    clearVAL();
+    /*Disable Echo*/
+    __delay_ms(50);
     UART_Write_Text("ATE0\r\n");
-    UART_Read_Text(&value, 15);
- 
-    Check(&value);
+    newCheck();
     
-    __delay_ms(300);
-    clearVAL();
-    UART_Write_Text("AT+CWMODE=1\r\n");
-    UART_Read_Text(&value, 10);
+    /*Dual Mode - Client and Host*/
+    __delay_ms(50);
+    UART_Write_Text("AT+CWMODE=3\r\n");
+    newCheck();
     
-    Check(&value);
+    /*Enable Multiple Connections - Max 4*/
+    __delay_ms(50);
+    UART_Write_Text("AT+CIPMUX=1\r\n");
+    newCheck();
+    
+    __delay_ms(50);
+   
+    /*Connect to the Required Router using routerName and Password*/
+    //__delay_ms(50);
+    //UART_Write_Text("AT+CWJAP=\"Timmy\",\"96027313\"\r\n");
+    //newCheck();
+  
+    
+    /*Enable a connection to TCP and required Remote IP and PORT*/
+    //__delay_ms(50);
+    //UART_Write_Text("AT+CIPSTART=4,\"TCP\",\"184.106.153.149\",80\r\n");
+    //newCheck();
+    
+    //Lcd_Clear();
+    /*Data Send to the IOT server*/
+    //__delay_ms(50);
+    //UART_Write_Text("AT+CIPSEND=4,50\r\n");
+    //waitToSend();
+    
+    /*Linking to Field*/
+    //__delay_ms(50);
+    //UART_Write_Text("GET /update?key=FQHTFYSPY3K8LML7&field1=101010\r\n");
+    
+    /*Close the channel*/
+    //__delay_ms(1000);
+    //UART_Write_Text("AT+CIPCLOSE=4\r\n");
+    //newCheck();
+    
+  
+  
+    /*Send Data Over the Internet*/
     
     while (1) {
         // UART_Write_Text("AT");
