@@ -24,6 +24,7 @@
 
 #include <xc.h>
 #include <string.h>
+#include <stdio.h>
 #include "lcd.h" 
 #include "UART Library.h"
 
@@ -54,9 +55,7 @@ void main(void) {
     SPEN = 1;
     BRGH = 1;
     BRG16 = 1;
-
-    unsigned char temp = 0x00;
-    
+ 
     TRISC = 0x00;
     Lcd_Init();
 
@@ -79,6 +78,7 @@ void main(void) {
     i2c_stop();
      */
 
+    unsigned char temp[35];
     /*Check Startup*/
     __delay_ms(1000);
     UART_Write_Text("AT\r\n");
@@ -102,25 +102,18 @@ void main(void) {
     Lcd_Clear();
     /*Creating a server to sent locally*/
     __delay_ms(50);
-    UART_Write_Text("AT+CIPSERVER=1,70\r\n");
+    UART_Write_Text("AT+CIPSERVER=1,333\r\n");
     newCheck();
     
-    unsigned char arr [35];
+    Lcd_Clear();
     __delay_ms(50);
     UART_Write_Text("AT+CIPSTATUS\r\n");
+    UART_Read_Text(&temp, 20);
+    Lcd_Write_String(temp);
     //newCheck();
-    UART_Read_Text(&arr,35);
     
-    Lcd_Write_String(arr);
-    __delay_ms(1000);
-    
-    Lcd_Clear();
-    
-    char subbuff[17];
-    memcpy( subbuff, &arr[16], 16 );
-    subbuff[16] = '\0';
-    
-    Lcd_Write_String(subbuff);
+    //Lcd_Clear();
+    //Lcd_Write_String(arr);
     
     /*Connect to the Required Router using routerName and Password*/
     //__delay_ms(50);
