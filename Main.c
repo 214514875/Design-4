@@ -99,6 +99,10 @@ void main(void) {
     UART_Write_Text("AT+CIPMUX=1\r\n");
     newCheck();
     
+    while(1){
+        
+    }
+    
     Lcd_Clear();
     /*Creating a server to sent locally*/
     __delay_ms(50);
