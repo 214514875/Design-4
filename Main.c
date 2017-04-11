@@ -24,11 +24,10 @@
 
 #include <xc.h>
 #include <string.h>
-#include <stdio.h>
 #include "lcd.h" 
 #include "UART Library.h"
 
-signed int a, pos=0;
+signed int a, pos = 0;
 unsigned char x = 0;
 
 void main(void) {
@@ -55,7 +54,9 @@ void main(void) {
     SPEN = 1;
     BRGH = 1;
     BRG16 = 1;
- 
+
+    unsigned char temp = 0x00;
+
     TRISC = 0x00;
     Lcd_Init();
 
@@ -78,85 +79,103 @@ void main(void) {
     i2c_stop();
      */
 
-    unsigned char temp[35];
-    /*Check Startup*/
+    /*
     __delay_ms(1000);
+    UART_Write_Text("AT+CIPSTATUS:tetype\r\n");
+    char str [40];
+    UART_Read_Text(&str,39);
+    
+     */
+
+    /*
+    int j;
+    for(j=0;str[j]!='\0';j++){
+        Lcd_Write_Char(str[j]);
+        __delay_ms(500);
+        if(j%15==0){
+            Lcd_Clear();
+        }
+    }
+     */
+
+    /*Check Startup*/  
+    __delay_ms(50);
     UART_Write_Text("AT\r\n");
     newCheck();
-    
-    /*Disable Echo*/
+
     __delay_ms(50);
-    UART_Write_Text("ATE0\r\n");
-    newCheck();
-    
-    /*Dual Mode - Client and Host*/
-    __delay_ms(50);
-    UART_Write_Text("AT+CWMODE=3\r\n");
-    newCheck();
-    
-    /*Enable Multiple Connections - Max 4*/
-    __delay_ms(50);
+    UART_Write_Text("AT+CWMODE=1\r\n");
+    //newCheck();
+
+
+    char str [20];
+    UART_Read_Text(&str, 10);
+    Lcd_Write_String(str);
+
+    Lcd_Clear();
+    int j;
+    for (j = 0; str[j] != '\0'; j++) {
+        Lcd_Write_Char(str[j]);
+        __delay_ms(500);
+        if (j % 16 == 0) {
+            Lcd_Clear();
+        }
+    }
+
+
     UART_Write_Text("AT+CIPMUX=1\r\n");
     newCheck();
-    
-    while(1){
-        
-    }
-    
-    Lcd_Clear();
-    /*Creating a server to sent locally*/
-    __delay_ms(50);
-    UART_Write_Text("AT+CIPSERVER=1,333\r\n");
+    __delay_ms(5000);
+
+    UART_Write_Text("AT+CWJAP=\"NOKIA 909_0136\",\"4904aA!!\"\r\n");
     newCheck();
+    __delay_ms(15000);
+
+    /*
+    UART_Write_Text("AT+CIPSTART=4,\"TCP\",\"184.106.153.149\",80\r\n");
+    newCheck();
+    __delay_ms(50);*/
+
+    //192.168.137.43//192.168.1.64
+
+
+    UART_Write_Text("AT+CIPSTART=4,\"TCP\",\"192.168.137.43\",4000\r\n");
+    newCheck();
+    __delay_ms(1000);
+
+    UART_Write_Text("AT+CIPSEND=4,10\r\n");
+    waitToSend();
+    __delay_ms(1000);
+
+
+    UART_Write_Text("111111\r\n");
+    __delay_ms(1000);
     
     Lcd_Clear();
-    __delay_ms(50);
-    UART_Write_Text("AT+CIPSTATUS\r\n");
-    UART_Read_Text(&temp, 20);
-    Lcd_Write_String(temp);
-    //newCheck();
+    Lcd_Write_String("Said");
     
-    //Lcd_Clear();
-    //Lcd_Write_String(arr);
-    
-    /*Connect to the Required Router using routerName and Password*/
-    //__delay_ms(50);
-    //UART_Write_Text("AT+CWJAP=\"Timmy\",\"96027313\"\r\n");
-    //newCheck();
-  
-    
-    /*Enable a connection to TCP and required Remote IP and PORT*/
-    //__delay_ms(50);
-    //UART_Write_Text("AT+CIPSTART=4,\"TCP\",\"184.106.153.149\",80\r\n");
-    //newCheck();
-    
-    //Lcd_Clear();
-    /*Data Send to the IOT server*/
-    //__delay_ms(50);
-    //UART_Write_Text("AT+CIPSEND=4,50\r\n");
-    //waitToSend();
-    
-    /*Linking to Field*/
-    //__delay_ms(50);
-    //UART_Write_Text("GET /update?key=FQHTFYSPY3K8LML7&field1=101010\r\n");
-    
-    /*Close the channel*/
+    UART_Write_Text("AT+CIPCLOSE=4\r\n");
+    newCheck();
+    Lcd_Write_String("Said");
+    // newCheck();
     //__delay_ms(1000);
-    //UART_Write_Text("AT+CIPCLOSE=4\r\n");
-    //newCheck();
-    
-  
-  
-    /*Send Data Over the Internet*/
     
     while (1) {
-        // UART_Write_Text("AT");
-        /*
-         RC7 = 1;
-         __delay_ms(1000);
-         RC7 = 0;
-         __delay_ms(1000);
-         */
+    }
+
+    UART_Write_Text("AT+CIPSEND=4,50\r\n");
+    waitToSend();
+    __delay_ms(50);
+
+    UART_Write_Text("GET /update?key=FQHTFYSPY3K8LML7&field1=101010\r\n");
+    __delay_ms(50);
+
+    UART_Write_Text("AT+CIPCLOSE=4\r\n");
+    //newCheck();
+
+
+
+    while (1) {
 
     }
 
